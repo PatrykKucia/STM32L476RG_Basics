@@ -21,6 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdbool.h>
 
 /* USER CODE END Includes */
 
@@ -55,6 +56,23 @@ static void MX_GPIO_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+static GPIO_TypeDef* const LED_PORT[] = {
+		LED_1_GPIO_Port, LED_2_GPIO_Port, LED_3_GPIO_Port, LED_4_GPIO_Port, LED_5_GPIO_Port,	//CTRL+LMB go to definition to see data type
+		LED_6_GPIO_Port, LED_7_GPIO_Port, LED_8_GPIO_Port, LED_9_GPIO_Port,
+};
+
+static const uint16_t LED_PIN[] = {																//now we can use multiple ports
+		LED_1_Pin, LED_2_Pin, LED_3_Pin, LED_4_Pin, LED_5_Pin,
+		LED_6_Pin, LED_7_Pin, LED_8_Pin, LED_9_Pin,
+};
+
+void led_switch(int led, bool turn)
+{
+	GPIO_PinState state = (turn) ? GPIO_PIN_SET : GPIO_PIN_RESET;
+
+	if (led >= 0 && led < 10)
+		HAL_GPIO_WritePin(LED_PORT[led], LED_PIN[led], state);
+}
 /* USER CODE END 0 */
 
 /**
@@ -93,12 +111,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-  for (int i = 0; i < 9; i++) {
-	  HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin << i, GPIO_PIN_SET);		//assigning LED to same port (B) enables using bit shift
-	  HAL_Delay(500);
-	  HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin << i, GPIO_PIN_RESET);	//next pins in port  GPIO_PIN_5 = 0000 0010 0000		etc
-	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	   //GPIO_PIN_6 = 0000 0100 0000
-	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	//not very useful -> usually we cant assign everything to only one port
+	  for (int i = 0; i < 10; i++) {
+	      led_switch(i, true);
+	      HAL_Delay(100);
+	      led_switch(i, false);
 	}
     /* USER CODE END WHILE */
 
