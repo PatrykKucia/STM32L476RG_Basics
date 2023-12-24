@@ -123,6 +123,8 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   int led=0;
+  led_switch(led, true);
+
   while (1)
   {
 	  	 if (is_button_pressed())								//not perfect (reacting only on pressing)
@@ -134,8 +136,10 @@ int main(void)
 	  			led=0;
 	  		 }
 	  		 led_switch(led, true);
-	  		 HAL_Delay(500);
+
 	}
+	  	 while (is_button_pressed())
+	  	    {}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
