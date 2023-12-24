@@ -70,7 +70,7 @@ void led_switch(int led, bool turn)
 {
 	GPIO_PinState state = (turn) ? GPIO_PIN_SET : GPIO_PIN_RESET;
 
-	if (led >= 0 && led < 10)
+	if (led >= 0 && led < 9)
 		HAL_GPIO_WritePin(LED_PORT[led], LED_PIN[led], state);
 }
 /* USER CODE END 0 */
@@ -111,7 +111,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  for (int i = 0; i < 10; i++) {
+	  for (int i = 0; i < 9; i++) {
 	      led_switch(i, true);
 	      HAL_Delay(100);
 	      led_switch(i, false);

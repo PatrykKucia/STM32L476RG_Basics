@@ -95,12 +95,12 @@ void led_switch(int led, bool turn)
  80001d4:	78fb      	ldrb	r3, [r7, #3]
  80001d6:	73fb      	strb	r3, [r7, #15]
 
-	if (led >= 0 && led < 10)
+	if (led >= 0 && led < 9)
  80001d8:	687b      	ldr	r3, [r7, #4]
  80001da:	2b00      	cmp	r3, #0
  80001dc:	db0e      	blt.n	80001fc <led_switch+0x34>
  80001de:	687b      	ldr	r3, [r7, #4]
- 80001e0:	2b09      	cmp	r3, #9
+ 80001e0:	2b08      	cmp	r3, #8
  80001e2:	dc0b      	bgt.n	80001fc <led_switch+0x34>
 		HAL_GPIO_WritePin(LED_PORT[led], LED_PIN[led], state);
  80001e4:	4a07      	ldr	r2, [pc, #28]	; (8000204 <led_switch+0x3c>)
@@ -156,7 +156,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  for (int i = 0; i < 10; i++) {
+	  for (int i = 0; i < 9; i++) {
  800021e:	2300      	movs	r3, #0
  8000220:	607b      	str	r3, [r7, #4]
  8000222:	e00d      	b.n	8000240 <main+0x34>
@@ -171,12 +171,12 @@ int main(void)
  8000232:	2100      	movs	r1, #0
  8000234:	6878      	ldr	r0, [r7, #4]
  8000236:	f7ff ffc7 	bl	80001c8 <led_switch>
-	  for (int i = 0; i < 10; i++) {
+	  for (int i = 0; i < 9; i++) {
  800023a:	687b      	ldr	r3, [r7, #4]
  800023c:	3301      	adds	r3, #1
  800023e:	607b      	str	r3, [r7, #4]
  8000240:	687b      	ldr	r3, [r7, #4]
- 8000242:	2b09      	cmp	r3, #9
+ 8000242:	2b08      	cmp	r3, #8
  8000244:	ddee      	ble.n	8000224 <main+0x18>
  8000246:	e7ea      	b.n	800021e <main+0x12>
 
