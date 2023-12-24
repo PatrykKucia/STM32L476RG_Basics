@@ -71,7 +71,13 @@ led_struct LED[] = {
 		{LED_8_GPIO_Port,LED_8_Pin},
 		{LED_9_GPIO_Port,LED_9_Pin},
 };
-
+bool is_button_pressed(void) {
+  if (HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin) == GPIO_PIN_RESET) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 void led_switch(int led, bool turn)
 {
@@ -116,12 +122,19 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  int led=0;
   while (1)
   {
-	  for (int i = 0; i < 9; i++) {
-	      led_switch(i, true);
-	      HAL_Delay(100);
-	      led_switch(i, false);
+	  	 if (is_button_pressed())								//not perfect (reacting only on pressing)
+	  	 {
+	  		 led_switch(led, false);
+	  		 led++;
+	  		 if(led>=9)
+	  		 {
+	  			led=0;
+	  		 }
+	  		 led_switch(led, true);
+	  		 HAL_Delay(500);
 	}
     /* USER CODE END WHILE */
 
@@ -186,12 +199,19 @@ static void MX_GPIO_Init(void)
 /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LED_6_Pin|LED_7_Pin|LED_8_Pin|LED_9_Pin
                           |LED_1_Pin|LED_2_Pin|LED_3_Pin|LED_4_Pin
                           |LED_5_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : BUTTON_Pin */
+  GPIO_InitStruct.Pin = BUTTON_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(BUTTON_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED_6_Pin LED_7_Pin LED_8_Pin LED_9_Pin
                            LED_1_Pin LED_2_Pin LED_3_Pin LED_4_Pin
