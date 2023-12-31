@@ -71,12 +71,24 @@ led_struct LED[] = {
 		{LED_8_GPIO_Port,LED_8_Pin},
 		{LED_9_GPIO_Port,LED_9_Pin},
 };
-bool is_button_pressed(void) {
-  if (HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin) == GPIO_PIN_RESET) {
-    return true;
-  } else {
-    return false;
-  }
+
+bool is_button_pressed(int button){
+	switch(button){
+	case 0:
+	  if (HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin) == GPIO_PIN_RESET) {
+		return true;
+	  } else {
+		return false;
+	  }
+	case 1:
+	  if (HAL_GPIO_ReadPin(BUTTON_2_GPIO_Port, BUTTON_2_Pin) == GPIO_PIN_RESET) {
+		return true;
+	  } else {
+		return false;
+	  }
+	default:
+		return false;
+	}
 }
 
 void led_switch(int led, bool turn)
@@ -127,7 +139,7 @@ int main(void)
 
   while (1)
   {
-	  	 if (is_button_pressed())								//not perfect (reacting only on pressing)
+	  	 if (is_button_pressed(0))								//not perfect (reacting only on pressing)
 	  	 {
 	  		 led_switch(led, false);
 	  		 led++;
@@ -138,8 +150,22 @@ int main(void)
 	  		 led_switch(led, true);
 
 	}
-	  	 while (is_button_pressed())
+	  	 while (is_button_pressed(0))
 	  	    {}
+
+		if (is_button_pressed(1))								//not perfect (reacting only on pressing)
+				 {
+					 led_switch(led, false);
+					 led--;
+					 if(led<0)
+					 {
+						led=8;
+					 }
+					 led_switch(led, true);
+
+			}
+				 while (is_button_pressed(1))
+					{}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -211,11 +237,11 @@ static void MX_GPIO_Init(void)
                           |LED_1_Pin|LED_2_Pin|LED_3_Pin|LED_4_Pin
                           |LED_5_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : BUTTON_Pin */
-  GPIO_InitStruct.Pin = BUTTON_Pin;
+  /*Configure GPIO pins : BUTTON_Pin BUTTON_2_Pin */
+  GPIO_InitStruct.Pin = BUTTON_Pin|BUTTON_2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(BUTTON_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED_6_Pin LED_7_Pin LED_8_Pin LED_9_Pin
                            LED_1_Pin LED_2_Pin LED_3_Pin LED_4_Pin
