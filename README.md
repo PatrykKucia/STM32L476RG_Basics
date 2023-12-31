@@ -34,7 +34,22 @@ Repository dedicated to the STM32L476RG microcontainer
     - `void HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)`
   - Quick conclusions
     - pins for same port (for example PB5-PB14) differ from each other by only one bit so we can use (ONLY IN THIS SPECIFIC CASE) bit switch operation << >>
-    -
+    - when pins are from diferent ports you can use struct:
+   ` typedef struct {`
+	 ` GPIO_TypeDef* port;`
+	  `uint16_t pin;`
+    `}led_struct;`
+    `led_struct LED[] = {`
+		`{LED_1_GPIO_Port,LED_1_Pin},`
+		`{LED_2_GPIO_Port,LED_2_Pin},`
+    - nice syntax 
+    `void led_switch(int led, bool turn)
+    {   
+	GPIO_PinState state = (turn) ? GPIO_PIN_SET :GPIO_PIN_RESET;
+	if (led >= 0 && led < 9)
+		HAL_GPIO_WritePin(LED[led].port, LED[led].pin, state);}`
+    - Use CubeMx to assign and name pins(better code understunding and automatic code generation)
+    - You can turn on Pull up/Pull down in most od pins
 
 > [!TIP]
 > Helpful advice for doing things better or more easily.
