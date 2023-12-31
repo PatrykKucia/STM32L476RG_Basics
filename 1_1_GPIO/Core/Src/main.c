@@ -142,30 +142,29 @@ int main(void)
 	  	 if (is_button_pressed(0))								//not perfect (reacting only on pressing)
 	  	 {
 	  		 led_switch(led, false);
-	  		 led++;
-	  		 if(led>=9)
-	  		 {
-	  			led=0;
-	  		 }
+	  		 if(++led>=9)
+	  			 led=0;
+
 	  		 led_switch(led, true);
 
-	}
 	  	 while (is_button_pressed(0))
 	  	    {}
-
+	  	 }
 		if (is_button_pressed(1))								//not perfect (reacting only on pressing)
-				 {
+			{
 					 led_switch(led, false);
-					 led--;
-					 if(led<0)
+
+					 if(--led<0)
 					 {
 						led=8;
 					 }
 					 led_switch(led, true);
 
-			}
-				 while (is_button_pressed(1))
+
+		  HAL_Delay(20);
+		  while (is_button_pressed(1))
 					{}
+			}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
