@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include <string.h>
+#include <stdio.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -56,7 +57,11 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+int __io_putchar(int ch)
+{
+    HAL_UART_Transmit(&huart2, (uint8_t*)&ch, 1, HAL_MAX_DELAY);
+    return 1;
+}
 /* USER CODE END 0 */
 
 /**
@@ -89,8 +94,11 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+
+  printf("Hello World %d ! \r\n", 1);
   const char message[] = "Hello world!\r\n"; // \r - cursor back to first character of this line
   HAL_UART_Transmit(&huart2, (uint8_t*)message, strlen(message), HAL_MAX_DELAY);
+  //strlen because sizeof counts end of line characters etc
   /* USER CODE END 2 */
 
   /* Infinite loop */

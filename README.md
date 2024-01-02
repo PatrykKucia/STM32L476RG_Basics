@@ -56,6 +56,12 @@ Repository dedicated to the STM32L476RG microcontainer
     - `HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)` 
     pointer to uart struct, data to send, size, timeout, returns error or ok
     - `HAL_MAX_DELAY` waits forever
+    - `fflush(stdout)` force to print stdout - A pointer to a FILE which refers to the standard output stream, usually a display terminal. it is printed only after \n in default
+  - Quick conclusions
+    - strlen because sizeof counts end of line characters etc.
+    - A weak function in C is a function that allows for the possibility of having multiple definitions in a program. 
+    `__attribute__((weak)) int _write(int file,....`
+    - 
 
 > [!TIP]
 > Helpful advice for doing things better or more easily.
