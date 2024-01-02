@@ -4,6 +4,7 @@ Repository dedicated to the STM32L476RG microcontainer
 #  Table of contents and projects
 1. First project
 2. GPIO
+3. UART
 
 
 #  First projects
@@ -50,6 +51,11 @@ Repository dedicated to the STM32L476RG microcontainer
 		HAL_GPIO_WritePin(LED[led].port, LED[led].pin, state);}`
     - Use CubeMx to assign and name pins(better code understunding and automatic code generation)
     - You can turn on Pull up/Pull down in most od pins
+  #  UART
+  - functions
+    - `HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)` 
+    pointer to uart struct, data to send, size, timeout, returns error or ok
+    - `HAL_MAX_DELAY` waits forever
 
 > [!TIP]
 > Helpful advice for doing things better or more easily.
