@@ -59,6 +59,11 @@ static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN 0 */
 int __io_putchar(int ch)
 {
+	if(ch=='\n')
+	{
+		uint8_t ch2='\r';	//to fix end of line
+		HAL_UART_Transmit(&huart2, (uint8_t*)&ch2, 1, HAL_MAX_DELAY);
+	}
     HAL_UART_Transmit(&huart2, (uint8_t*)&ch, 1, HAL_MAX_DELAY);
     return 1;
 }
@@ -94,10 +99,11 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
-  printf("Hello World %d ! \r\n", 1);
-  const char message[] = "Hello world!\r\n"; // \r - cursor back to first character of this line
-  HAL_UART_Transmit(&huart2, (uint8_t*)message, strlen(message), HAL_MAX_DELAY);
+  float pi = 3.14;
+  printf("pi: %f\n", pi);//have to set Use float with printf from newlib-nano in properties
+  fflush(stdout);//empty buffor if no \n
+  //const char message[] = "Hello world!\r\n"; // \r - cursor back to first character of this line
+  //HAL_UART_Transmit(&huart2, (uint8_t*)message, strlen(message), HAL_MAX_DELAY);
   //strlen because sizeof counts end of line characters etc
   /* USER CODE END 2 */
 

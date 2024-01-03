@@ -57,11 +57,15 @@ Repository dedicated to the STM32L476RG microcontainer
     pointer to uart struct, data to send, size, timeout, returns error or ok
     - `HAL_MAX_DELAY` waits forever
     - `fflush(stdout)` force to print stdout - A pointer to a FILE which refers to the standard output stream, usually a display terminal. it is printed only after \n in default
+    - `\r` is used to move the cursor back to the beginning of the line in a terminal or console window.
   - Quick conclusions
     - strlen because sizeof counts end of line characters etc.
     - A weak function in C is a function that allows for the possibility of having multiple definitions in a program. 
     `__attribute__((weak)) int _write(int file,....`
-    - 
-
+    - `#include <>` In this case, the preprocessor searches for the header file in the standard directories specified by the system.
+    - `#include ""`In this case, the preprocessor searches for the header file in the same directory as the source file, and then in the standard directories.
+    - `' '`The single quotes are used for single character constants. They do not interpret any escape sequences.
+    - `" "`The double quotes are used for string literals.They interpret escape sequences like newline, tab, backspace, etc.
+    - newlib-nano is a C library for embedded systems, and it provides a minimal set of features from the newlib library. The option Use float with printf allows the library to include the necessary code to support the floating-point formatting in the printf function.
 > [!TIP]
 > Helpful advice for doing things better or more easily.
