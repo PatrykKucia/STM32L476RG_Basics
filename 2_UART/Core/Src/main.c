@@ -99,18 +99,29 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+/*
   float pi = 3.14;
   printf("pi: %f\n", pi);//have to set Use float with printf from newlib-nano in properties
   fflush(stdout);//empty buffor if no \n
+*/
   //const char message[] = "Hello world!\r\n"; // \r - cursor back to first character of this line
   //HAL_UART_Transmit(&huart2, (uint8_t*)message, strlen(message), HAL_MAX_DELAY);
   //strlen because sizeof counts end of line characters etc
+  HAL_StatusTypeDef text;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+  uint8_t value;
+
+	 text = HAL_UART_Receive(&huart2, &value, 1, HAL_MAX_DELAY);
+	 if(text==HAL_OK)
+	 {
+	 printf("received : %c\n", value);
+	 }
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
