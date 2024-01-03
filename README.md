@@ -59,6 +59,8 @@ Repository dedicated to the STM32L476RG microcontainer
     - `HAL_MAX_DELAY` waits forever
     - `fflush(stdout)` force to print stdout - A pointer to a FILE which refers to the standard output stream, usually a display terminal. it is printed only after \n in default
     - `\r` is used to move the cursor back to the beginning of the line in a terminal or console window.
+    - `strcmp` function used to compare two strings.
+
   - Quick conclusions
     - strlen because sizeof counts end of line characters etc.
     - A weak function in C is a function that allows for the possibility of having multiple definitions in a program. 
