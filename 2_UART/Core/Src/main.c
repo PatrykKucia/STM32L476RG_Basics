@@ -116,10 +116,15 @@ int main(void)
   {
   uint8_t value;
 
-	 text = HAL_UART_Receive(&huart2, &value, 1, HAL_MAX_DELAY);
+	 text = HAL_UART_Receive(&huart2, &value, 1, 2000);//2000ms
 	 if(text==HAL_OK)
 	 {
 	 printf("received : %c\n", value);
+	 }
+	 else
+	 {
+	 printf(".");
+	 fflush(stdout);
 	 }
 
     /* USER CODE END WHILE */
