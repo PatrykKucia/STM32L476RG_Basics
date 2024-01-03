@@ -32,7 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define LINE_MAX_LENGTH	10
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -66,6 +66,33 @@ int __io_putchar(int ch)
 	}
     HAL_UART_Transmit(&huart2, (uint8_t*)&ch, 1, HAL_MAX_DELAY);
     return 1;
+}
+
+static char line_buffer[LINE_MAX_LENGTH + 1];//one more because End of line \0
+static uint32_t line_length;				 //coursor index
+
+void line_append(uint8_t value)
+{
+	if (value == '\r' || value == '\n') {	//simply if enter clicked
+		if (line_length > 0) {
+			line_buffer[line_length] = '\0';
+			printf("\n");
+			printf("text: %s\n", line_buffer);
+			line_length = 0;
+		}
+	}
+	else {
+		if (line_length >= LINE_MAX_LENGTH) { //if buffor is full
+			line_length = 0;
+			printf("\nbuffor full\n");
+			printf("this data will be overwrite: %s\n", line_buffer);
+		}
+
+		line_buffer[line_length++] = value;
+		printf("%c", value);					//display current character
+		fflush(stdout);
+
+	}
 }
 /* USER CODE END 0 */
 
@@ -116,15 +143,15 @@ int main(void)
   {
   uint8_t value;
 
-	 text = HAL_UART_Receive(&huart2, &value, 1, 2000);//2000ms
+	 text = HAL_UART_Receive(&huart2, &value, 1, 0);//2000ms
 	 if(text==HAL_OK)
 	 {
-	 printf("received : %c\n", value);
+		 line_append(value);
 	 }
 	 else
 	 {
-	 printf(".");
-	 fflush(stdout);
+	 //printf(".");
+	 //fflush(stdout);
 	 }
 
     /* USER CODE END WHILE */
