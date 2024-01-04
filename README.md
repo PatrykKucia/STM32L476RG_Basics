@@ -5,6 +5,7 @@ Repository dedicated to the STM32L476RG microcontainer
 1. First project
 2. GPIO
 3. UART
+4. System clocking, RTC, watchdog
 
 
 #  First projects
@@ -62,6 +63,7 @@ Repository dedicated to the STM32L476RG microcontainer
     - `strcmp` function used to compare two strings.
 
   - Quick conclusions
+    - in cubeMX set debug as serial wire (in SYS) and usually USART2 in connectivity
     - strlen because sizeof counts end of line characters etc.
     - A weak function in C is a function that allows for the possibility of having multiple definitions in a program. 
     `__attribute__((weak)) int _write(int file,....`
@@ -71,5 +73,23 @@ Repository dedicated to the STM32L476RG microcontainer
     - `" "`The double quotes are used for string literals.They interpret escape sequences like newline, tab, backspace, etc.
     - newlib-nano is a C library for embedded systems, and it provides a minimal set of features from the newlib library. The option Use float with printf allows the library to include the necessary code to support the floating-point formatting in the printf function.
     - when Overrun is enable program will block when to much data is received. When disabled it will just loose some data.
+  # System clocking, RTC, watchdog
+  - functions
+    - this two functons must be used togetger(Hazard)
+    - `HAL_StatusTypeDef HAL_RTC_GetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTime, uint32_t Format)`
+    current time usually set format as RTC_FORMAT_BIN
+    - `HAL_StatusTypeDef HAL_RTC_GetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDate, uint32_t Format)`
+    
+  - Quick conclusions
+    - LSI (ang. low-speed internal) – internal generator RC low frequency (32 kHz),
+    - LSE (ang. low-speed external) – external generator low frequency or quartz resonator, usually 32 768 Hz,
+    - HSI (ang. high-speed internal) – internal generator RC high frequency (16 MHz),
+    - MSI (ang. multi-speed internal) – internal generator RC with selective frequency (from 100 kHz to 48 MHz),
+    - HSE (ang. high-speed external) – external generator high frequency or quartz resonator (usually  8 MHz).  
+    - the STM32L476RG can be made available with two clock versions:
+      - low frequency clocks: LSI or LSE,
+      - high frequency clocks: HSI, MSI or HSE.
+    - lower frequency -> less powert consumption
+  
 > [!TIP]
 > Helpful advice for doing things better or more easily.

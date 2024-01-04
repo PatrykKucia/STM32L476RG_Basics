@@ -1,0 +1,8 @@
+../Core/Src/main.c:64:5:__io_putchar	2
+../Core/Src/main.c:75:6:is_button_pressed	2
+../Core/Src/main.c:89:5:main	1
+../Core/Src/main.c:142:6:SystemClock_Config	4
+../Core/Src/main.c:188:13:MX_RTC_Init	2
+../Core/Src/main.c:224:13:MX_USART2_UART_Init	2
+../Core/Src/main.c:259:13:MX_GPIO_Init	1
+../Core/Src/main.c:297:6:Error_Handler	1
