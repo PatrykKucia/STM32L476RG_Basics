@@ -75,7 +75,7 @@ Repository dedicated to the STM32L476RG microcontainer
     - when Overrun is enable program will block when to much data is received. When disabled it will just loose some data.
   # System clocking, RTC, watchdog
   - functions
-    - this two functons must be used togetger(Hazard)
+    - this two functons must be used together (Hazard)
     - `HAL_StatusTypeDef HAL_RTC_GetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTime, uint32_t Format)`
     current time usually set format as RTC_FORMAT_BIN
     - `HAL_StatusTypeDef HAL_RTC_GetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDate, uint32_t Format)`

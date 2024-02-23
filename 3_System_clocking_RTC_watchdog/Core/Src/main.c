@@ -113,7 +113,11 @@ int main(void)
   MX_RTC_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  RTC_TimeTypeDef new_time = {0}; //variable for new time set
+  new_time.Hours = 7;
+  new_time.Minutes = 45;
+  new_time.Seconds = 0;
+  HAL_RTC_SetTime(&hrtc, &new_time, RTC_FORMAT_BIN);
   /* USER CODE END 2 */
 
   /* Infinite loop */
