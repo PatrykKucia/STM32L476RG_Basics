@@ -99,11 +99,14 @@ Repository dedicated to the STM32L476RG microcontainer
     - LSE (ang. low-speed external) – external generator low frequency or quartz resonator, usually 32 768 Hz,
     - HSI (ang. high-speed internal) – internal generator RC high frequency (16 MHz),
     - MSI (ang. multi-speed internal) – internal generator RC with selective frequency (from 100 kHz to 48 MHz),
-    - HSE (ang. high-speed external) – external generator high frequency or quartz resonator (usually  8 MHz).  
+    - HSE (ang. high-speed external) – external generator high frequency or quartz resonator (usually  8 MHz). 
+    - PLL (ang. phase locked loop) - frequency multiplier 
     - the STM32L476RG can be made available with two clock versions:
       - low frequency clocks: LSI or LSE,
       - high frequency clocks: HSI, MSI or HSE.
     - lower frequency -> less powert consumption
+
+    - MSI can be calibrated using LSE (accurity rising from 1% to 0.25%)
   
 > [!TIP]
 > Helpful advice for doing things better or more easily.
