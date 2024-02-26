@@ -79,6 +79,8 @@ Repository dedicated to the STM32L476RG microcontainer
     - `HAL_StatusTypeDef HAL_RTC_GetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTime, uint32_t Format)`
     current time usually set format as RTC_FORMAT_BIN
     - `HAL_StatusTypeDef HAL_RTC_GetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDate, uint32_t Format)`
+    - this function sets time in code new variable RTC_TimeTypeDef neaded 
+    - `HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTime, uint32_t Format)`
     
   - Quick conclusions
     - LSI (ang. low-speed internal) – internal generator RC low frequency (32 kHz),
