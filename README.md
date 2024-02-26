@@ -81,7 +81,7 @@ Repository dedicated to the STM32L476RG microcontainer
       - .Seconds
       - .TimeFormat - AM/PM etc. 
     - RTC_DateTypeDef
-      - .WeekDay
+      - .WeekDay - for example `RTC_WEEKDAY_TUESDAY`
       - .Month
       - .Date
       - .Year - only last 2 digits so +2000 in this centry :) 
@@ -91,6 +91,8 @@ Repository dedicated to the STM32L476RG microcontainer
     - `HAL_StatusTypeDef HAL_RTC_GetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDate, uint32_t Format)`
     - this function sets time in code new variable RTC_TimeTypeDef neaded 
     - `HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTime, uint32_t Format)`
+    - same function for seting date (in real case)
+    - `HAL_RTC_SetDate(&hrtc, &new_date, RTC_FORMAT_BIN);`
     
   - Quick conclusions
     - LSI (ang. low-speed internal) – internal generator RC low frequency (32 kHz),

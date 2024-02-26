@@ -114,10 +114,19 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   RTC_TimeTypeDef new_time = {0}; //variable for new time set
-  new_time.Hours = 7;
+  RTC_DateTypeDef new_date = {0}; //variable for new date set
+
+  new_time.Hours = 15;
   new_time.Minutes = 45;
   new_time.Seconds = 0;
+
+  new_date.Date = 18;
+  new_date.Month = 04;
+  new_date.WeekDay = RTC_WEEKDAY_MONDAY;
+  new_date.Year = 24;
+
   HAL_RTC_SetTime(&hrtc, &new_time, RTC_FORMAT_BIN);
+  HAL_RTC_SetDate(&hrtc, &new_date, RTC_FORMAT_BIN);
   /* USER CODE END 2 */
 
   /* Infinite loop */
