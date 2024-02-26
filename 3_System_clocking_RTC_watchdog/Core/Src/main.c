@@ -130,7 +130,7 @@ int main(void)
 	  HAL_RTC_GetTime(&hrtc, &time, RTC_FORMAT_BIN);
 	  HAL_RTC_GetDate(&hrtc, &date, RTC_FORMAT_BIN);
 
-	  printf("time now: %02d:%02d:%02d\n", time.Hours, time.Minutes, time.Seconds);
+	  printf("time now: %02d:%02d:%02d date:%02d.%02d.%04d \n", time.Hours, time.Minutes, time.Seconds, date.Date, date.Month, 2000 + date.Year);
 	  HAL_Delay(200);
     /* USER CODE END WHILE */
 
