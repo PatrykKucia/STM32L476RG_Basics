@@ -93,6 +93,8 @@ Repository dedicated to the STM32L476RG microcontainer
     - `HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTime, uint32_t Format)`
     - same function for seting date (in real case)
     - `HAL_RTC_SetDate(&hrtc, &new_date, RTC_FORMAT_BIN);`
+    - Watchdog refreshing 
+    - `HAL_StatusTypeDef HAL_IWDG_Refresh(IWDG_HandleTypeDef *hiwdg)`
     
   - Quick conclusions
     - LSI (ang. low-speed internal) – internal generator RC low frequency (32 kHz),
@@ -105,6 +107,11 @@ Repository dedicated to the STM32L476RG microcontainer
       - low frequency clocks: LSI or LSE,
       - high frequency clocks: HSI, MSI or HSE.
     - lower frequency -> less powert consumption
+
+
+    - IWDG independent watchdog - other clock 
+    - WWDG - same clock 
+
 
     - MSI can be calibrated using LSE (accurity rising from 1% to 0.25%)
   
