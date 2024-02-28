@@ -40,6 +40,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+RTC_HandleTypeDef hrtc;
 
 /* USER CODE BEGIN PV */
 
@@ -48,6 +49,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_RTC_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -66,22 +68,7 @@ int stop_acquisition(void)
 	return 0;
 }
 
-void HAL_Delay(uint32_t Delay)
-{
-  uint32_t tickstart = HAL_GetTick();
-  uint32_t wait = Delay;
 
-  /* Add a period to guaranty minimum wait */
-  if (wait < HAL_MAX_DELAY)
-  {
-    wait += (uint32_t)uwTickFreq;
-  }
-
-  while ((HAL_GetTick() - tickstart) < wait)
-  {
-	  __WFI();
-   }
-}
 /* USER CODE END 0 */
 
 /**
@@ -112,8 +99,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_RTC_Init();
   /* USER CODE BEGIN 2 */
+  start_acquisition();
+  HAL_Delay(50);
+  stop_acquisition();
 
+  HAL_PWR_EnterSTANDBYMode(); //standby mode
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -124,11 +116,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  start_acquisition();
-	  HAL_Delay(50);
+	//  start_acquisition();
+	//  HAL_Delay(50);
 
-	  stop_acquisition();
-	  HAL_Delay(10000);
+	//  stop_acquisition();
+	//  HAL_Delay(10000);
   }
   /* USER CODE END 3 */
 }
@@ -185,6 +177,46 @@ void SystemClock_Config(void)
   /** Enable MSI Auto calibration
   */
   HAL_RCCEx_EnableMSIPLLMode();
+}
+
+/**
+  * @brief RTC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RTC_Init(void)
+{
+
+  /* USER CODE BEGIN RTC_Init 0 */
+
+  /* USER CODE END RTC_Init 0 */
+
+  /* USER CODE BEGIN RTC_Init 1 */
+
+  /* USER CODE END RTC_Init 1 */
+
+  /** Initialize RTC Only
+  */
+  hrtc.Instance = RTC;
+  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+  hrtc.Init.AsynchPrediv = 127;
+  hrtc.Init.SynchPrediv = 255;
+  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
+  hrtc.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
+  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  if (HAL_RTC_Init(&hrtc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* USER CODE BEGIN RTC_Init 2 */
+  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 20479, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
+     {
+       Error_Handler();
+     }
+  /* USER CODE END RTC_Init 2 */
+
 }
 
 /**

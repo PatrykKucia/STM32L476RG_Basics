@@ -116,9 +116,17 @@ Repository dedicated to the STM32L476RG microcontainer
   - functions
     - `HAL_Delay` is just waiting till reach delay tick number, we can us __WFI for turning it off between ticks (interrupts)
     - `__WFI` assembler macro -Wait For Interrupt (stops program till first interrupt)
+    - `void HAL_PWR_EnterSTANDBYMode(void)` - puts microcontroller to standby mode
     - We cannot assume constant power consumption because it varies while the program is running
   - Quick conclusions
     - working time calculation mAh(sorce)/curent(board)=hour count -> if same voltage
+    - working voltage range 1.7V - 3.6V (no ldo step etc)
+    - Wake Up Counter (Timers-> RTC) setts to 20,479 gives us 10s of delay. The RTC module is clocked at 32,768 Hz. In addition, we have a selected divisor by 16. This means that the clock will run at a frequency of 32768 / 16 = 2048 Hz, (20479 + 1) / 2048 = 10. "+ 1" because the counter counts from zero, so counting 100 pulses would require entering the value 99, etc. then we need activate interrupt in NVIC
+    - > [!IMPORTANT] bug in cubeMX must add 
+    `   /* USER CODE BEGIN RTC_Init 2 */
+  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 20479, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
+     {
+       Error_Handler();
+     }
+  /* USER CODE END RTC_Init 2 */`
 
-> [!TIP]
-> Helpful advice for doing things better or more easily.
