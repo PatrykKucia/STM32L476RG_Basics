@@ -104,12 +104,17 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  start_acquisition();
+
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  start_acquisition();
+	  HAL_Delay(50);
+
+	  stop_acquisition();
+	  HAL_Delay(10000);
   }
   /* USER CODE END 3 */
 }
