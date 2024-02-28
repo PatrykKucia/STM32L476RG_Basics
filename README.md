@@ -114,6 +114,8 @@ Repository dedicated to the STM32L476RG microcontainer
     - MSI can be calibrated using LSE (accurity rising from 1% to 0.25%)
   # Energy saving
   - functions
+    - `HAL_Delay` is just waiting till reach delay tick number, we can us __WFI for turning it off between ticks (interrupts)
+    - `__WFI` assembler macro -Wait For Interrupt (stops program till first interrupt)
     - We cannot assume constant power consumption because it varies while the program is running
   - Quick conclusions
     - working time calculation mAh(sorce)/curent(board)=hour count -> if same voltage
