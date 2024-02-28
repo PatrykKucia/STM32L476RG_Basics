@@ -108,12 +108,15 @@ Repository dedicated to the STM32L476RG microcontainer
       - high frequency clocks: HSI, MSI or HSE.
     - lower frequency -> less powert consumption
 
-
     - IWDG independent watchdog - other clock 
     - WWDG - same clock 
 
-
     - MSI can be calibrated using LSE (accurity rising from 1% to 0.25%)
-  
+  # Energy saving
+  - functions
+    - We cannot assume constant power consumption because it varies while the program is running
+  - Quick conclusions
+    - working time calculation mAh(sorce)/curent(board)=hour count -> if same voltage
+
 > [!TIP]
 > Helpful advice for doing things better or more easily.
