@@ -124,9 +124,19 @@ Repository dedicated to the STM32L476RG microcontainer
     - Wake Up Counter (Timers-> RTC) setts to 20,479 gives us 10s of delay. The RTC module is clocked at 32,768 Hz. In addition, we have a selected divisor by 16. This means that the clock will run at a frequency of 32768 / 16 = 2048 Hz, (20479 + 1) / 2048 = 10. "+ 1" because the counter counts from zero, so counting 100 pulses would require entering the value 99, etc. then we need activate interrupt in NVIC
     - > [!IMPORTANT] bug in cubeMX must add 
     `   /* USER CODE BEGIN RTC_Init 2 */
+    - in tools you can use Power Consumption Calculator.
+      - double click on mode table to set duration ( auto refresh must be off!)
   if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 20479, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
      {
        Error_Handler();
      }
   /* USER CODE END RTC_Init 2 */`
-
+  #  Interrupts & Error handling
+  - functions
+    - in CubeMX `GPIO_EXTI13` stands for GPIO external interrupt 13
+    - `void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)` - funnction used by interrupt handler
+    - `volatile` before variable will force the compiler to always refer to memory when operating on variables.This means that the compiler will disable optimizations for such a variable, such as replacement by a constant or the contents of a register 
+  - Quick conclusions
+    - "Static" means maintaining values ​​between successive definitions of the same variable. This is primarily useful in functions. When we define a variable in the function body, this variable will be redefined along with the default value (if any).
+    - From the programming side, the interrupt handling vector takes the form of an array of pointers to functions, and the functions themselves are the most ordinary functions of the C language. This array is located in the file startup_stm32l476rgtx.s, which can be found in Core\Startup. it was written in assembly language. We simply see an array called g_pfnVectors, the subsequent positions of which (apart from the first one) are the names of the functions called when the interrupt occurs.
+    - NVIC "nested vectored interrupt controller" is a universal interrupt controller that is available with ARM Cortex-M cores. This is an advanced solution that has many advantages over the previous ones
