@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,10 +62,13 @@ volatile uint32_t counter; //volatile force compiler to always look in to memory
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  if (GPIO_Pin == USER_BUTTON_Pin) {
-	  counter++;
-
-  }
+	if (GPIO_Pin == USER_BUTTON_Pin) {
+		counter++;
+//	    printf("counter = %lu\n", counter);
+//
+//	    volatile uint32_t delay;
+//	    for (delay = 0; delay < 1000000; delay++);
+	  }
 }
 
 int __io_putchar(int ch)
@@ -110,7 +114,8 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  char message[] = "Hello World!\r\n";
+  HAL_UART_Transmit_IT(&huart2, (uint8_t*)message, strlen(message));
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -236,7 +241,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : USER_BUTTON_Pin */
   GPIO_InitStruct.Pin = USER_BUTTON_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(USER_BUTTON_GPIO_Port, &GPIO_InitStruct);
 
@@ -248,7 +253,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 8, 0);
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */

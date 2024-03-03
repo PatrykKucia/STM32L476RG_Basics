@@ -136,7 +136,19 @@ Repository dedicated to the STM32L476RG microcontainer
     - in CubeMX `GPIO_EXTI13` stands for GPIO external interrupt 13
     - `void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)` - funnction used by interrupt handler
     - `volatile` before variable will force the compiler to always refer to memory when operating on variables.This means that the compiler will disable optimizations for such a variable, such as replacement by a constant or the contents of a register 
+    - `HAL_StatusTypeDef HAL_UART_Transmit_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size)` similar to normal transmit but from interrupt 
   - Quick conclusions
     - "Static" means maintaining values ​​between successive definitions of the same variable. This is primarily useful in functions. When we define a variable in the function body, this variable will be redefined along with the default value (if any).
     - From the programming side, the interrupt handling vector takes the form of an array of pointers to functions, and the functions themselves are the most ordinary functions of the C language. This array is located in the file startup_stm32l476rgtx.s, which can be found in Core\Startup. it was written in assembly language. We simply see an array called g_pfnVectors, the subsequent positions of which (apart from the first one) are the names of the functions called when the interrupt occurs.
     - NVIC "nested vectored interrupt controller" is a universal interrupt controller that is available with ARM Cortex-M cores. This is an advanced solution that has many advantages over the previous ones
+    - (External Interrupt Mode) (External Event Mode). The difference is that when an interrupt is reported, its handler is executed. However, the event can be associated with another hardware module and appropriate action will be taken without interrupting the program.
+    
+    ![alt text](image.png)
+    - This table shows which modules can be a source and which can be a destination. The button is connected to EXTI, and such a source can be associated with ADC, DFSDM and DAC. This means that pressing the button can, for example, trigger reading from the ADC (after completion, we will receive an interrupt). Without events, we would have two interrupts - the first one from EXTI, which would start the conversion, and only the second one would read the result. Using events has several advantages:
+      - fewer interrupts, so the microcontroller has more time for other tasks,
+      - if the processor is asleep, events can be handled without waking it up,
+      - events run in hardware, so delays are minimal and precisely defined. It doesn't matter for the button, but if it was a signal from a sensor saying that you need to immediately download data from the ADC, in extreme situations the use of interrupts could be too slow (interrupts also have delays).
+    - **NEVER! use Delay in interrupt handling!**
+    - The lower the value, the higher the priority
+    - preemption priority If another interrupt with a lower preemption priority value appears during interrupt processing, the current procedure will be suspended and the processor will start servicing the new interrupt.
+    - subpriority, it is important if two interrupts with identical priority are ready to be serviced at the same time.
