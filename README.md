@@ -137,6 +137,7 @@ Repository dedicated to the STM32L476RG microcontainer
     - `void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)` - funnction used by interrupt handler
     - `volatile` before variable will force the compiler to always refer to memory when operating on variables.This means that the compiler will disable optimizations for such a variable, such as replacement by a constant or the contents of a register 
     - `HAL_StatusTypeDef HAL_UART_Transmit_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size)` similar to normal transmit but from interrupt 
+    - `void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)`function called after last bit was send 
   - Quick conclusions
     - "Static" means maintaining values ​​between successive definitions of the same variable. This is primarily useful in functions. When we define a variable in the function body, this variable will be redefined along with the default value (if any).
     - From the programming side, the interrupt handling vector takes the form of an array of pointers to functions, and the functions themselves are the most ordinary functions of the C language. This array is located in the file startup_stm32l476rgtx.s, which can be found in Core\Startup. it was written in assembly language. We simply see an array called g_pfnVectors, the subsequent positions of which (apart from the first one) are the names of the functions called when the interrupt occurs.

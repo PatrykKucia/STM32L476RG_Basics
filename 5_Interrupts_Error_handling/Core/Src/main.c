@@ -82,6 +82,36 @@ int __io_putchar(int ch)
     return 1;
 }
 
+int message_number = 0;
+
+void send_next_message(void)
+{
+  static char message[] = "Hello \r\n";
+  static char message2[] = "World!\r\n";
+
+  switch (message_number)
+  {
+  case 0:
+    HAL_UART_Transmit_IT(&huart2, (uint8_t*)message, strlen(message));
+    message_number = 1;
+    break;
+  case 1:
+    HAL_UART_Transmit_IT(&huart2, (uint8_t*)message2, strlen(message2));
+    message_number = 2;
+    break;
+  default:
+    break;
+  }
+
+}
+
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+	 if (huart == &huart2) {
+	    send_next_message();
+	  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -114,8 +144,16 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  char message[] = "Hello World!\r\n";
-  HAL_UART_Transmit_IT(&huart2, (uint8_t*)message, strlen(message));
+  send_next_message();
+//  char message[] = "Hello!\r\n";
+//  if (HAL_UART_Transmit_IT(&huart2, (uint8_t*)message, strlen(message)) != HAL_OK) {
+//    Error_Handler();
+//  }
+//
+//  char message2[] = "World!\r\n";
+//  if (HAL_UART_Transmit_IT(&huart2, (uint8_t*)message2, strlen(message2)) != HAL_OK) {
+//    Error_Handler();
+//  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
