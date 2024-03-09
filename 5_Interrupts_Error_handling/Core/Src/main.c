@@ -60,6 +60,12 @@ static void MX_USART2_UART_Init(void);
 
 volatile uint32_t counter; //volatile force compiler to always look in to memory
 
+typedef enum {
+  MESSAGE_1,
+  MESSAGE_2,
+  DONE
+}sender_state;
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if (GPIO_Pin == USER_BUTTON_Pin) {
@@ -69,6 +75,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 //	    volatile uint32_t delay;
 //	    for (delay = 0; delay < 1000000; delay++);
 	  }
+}
+
+void test() {
+  volatile char x[] = "abcdefghijkmnopq";
 }
 
 int __io_putchar(int ch)
@@ -82,22 +92,23 @@ int __io_putchar(int ch)
     return 1;
 }
 
-int message_number = 0;
+sender_state message_number = MESSAGE_1;
+
 
 void send_next_message(void)
 {
-  static char message[] = "Hello \r\n";
-  static char message2[] = "World!\r\n";
+  char message[] = "Hello \r\n";
+  char message2[] = "World!\r\n";
 
   switch (message_number)
   {
-  case 0:
+  case MESSAGE_1:
     HAL_UART_Transmit_IT(&huart2, (uint8_t*)message, strlen(message));
-    message_number = 1;
+    message_number = MESSAGE_2;
     break;
-  case 1:
+  case MESSAGE_2:
     HAL_UART_Transmit_IT(&huart2, (uint8_t*)message2, strlen(message2));
-    message_number = 2;
+    message_number = DONE;
     break;
   default:
     break;
@@ -145,6 +156,7 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   send_next_message();
+  test();
 //  char message[] = "Hello!\r\n";
 //  if (HAL_UART_Transmit_IT(&huart2, (uint8_t*)message, strlen(message)) != HAL_OK) {
 //    Error_Handler();
