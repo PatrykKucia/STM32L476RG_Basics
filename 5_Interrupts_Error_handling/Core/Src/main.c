@@ -32,7 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define LINE_MAX_LENGTH 80
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,7 +44,18 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+volatile uint32_t counter; //volatile force compiler to always look in to memory
+static char line_buffer[LINE_MAX_LENGTH + 1];
+static uint32_t line_length;
 
+typedef enum {
+  MESSAGE_1,
+  MESSAGE_2,
+  DONE
+}sender_state;
+
+sender_state message_number = MESSAGE_1;
+uint8_t uart_rx_buffer;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -57,31 +68,52 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-volatile uint32_t counter; //volatile force compiler to always look in to memory
-
-typedef enum {
-  MESSAGE_1,
-  MESSAGE_2,
-  DONE
-}sender_state;
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+static char line_buffer[LINE_MAX_LENGTH + 1];
+static uint32_t line_length;
+void line_append(uint8_t value)
 {
-	if (GPIO_Pin == USER_BUTTON_Pin) {
+  if (value == '\r' || value == '\n')
+  {
+  // End of line
+    if (line_length > 0)
+    {
+      // if not NULL -> add end of line
+      line_buffer[line_length] = '\0';
+      // data handling
+      if (strcmp(line_buffer, "on") == 0)
+      {
+        HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+      }
+      else if (strcmp(line_buffer, "off") == 0)
+      {
+      HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+      }
+      //start new text
+      line_length = 0;
+    }
+  }
+  else
+  {
+    if (line_length >= LINE_MAX_LENGTH)
+    {
+      // to much data
+      line_length = 0;
+    }
+  // add tu buffer
+  line_buffer[line_length++] = value;
+  }
+}
+
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)// interrupt from button
+{
+	if (GPIO_Pin == USER_BUTTON_Pin)
+	{
 		counter++;
-//	    printf("counter = %lu\n", counter);
-//
-//	    volatile uint32_t delay;
-//	    for (delay = 0; delay < 1000000; delay++);
-	  }
+	}
 }
 
-void test() {
-  volatile char x[] = "abcdefghijkmnopq";
-}
-
-int __io_putchar(int ch)
+int __io_putchar(int ch)					 //serial console printing using printf
 {
 	if(ch=='\n')
 	{
@@ -92,13 +124,10 @@ int __io_putchar(int ch)
     return 1;
 }
 
-sender_state message_number = MESSAGE_1;
-
-
-void send_next_message(void)
+void send_next_message(void)				//printing 2 messages one by one using interrupts
 {
-  char message[] = "Hello \r\n";
-  char message2[] = "World!\r\n";
+  static char message[] = "Hello \r\n";
+  static char message2[] = "World!\r\n";
 
   switch (message_number)
   {
@@ -117,11 +146,19 @@ void send_next_message(void)
 }
 
 
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)		//called after last bit was send via UART
 {
-	 if (huart == &huart2) {
-	    send_next_message();
+	 if (huart == &huart2) {			//if port is correct
+	    send_next_message();			//next message
 	  }
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)		//called after UART receive interrupt
+{
+	if (huart == &huart2) {
+	    line_append(uart_rx_buffer);						//handle message
+	    HAL_UART_Receive_IT(&huart2, &uart_rx_buffer, 1);	//turn on waiting for next receive interrupt
+	}
 }
 /* USER CODE END 0 */
 
@@ -156,16 +193,9 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   send_next_message();
-  test();
-//  char message[] = "Hello!\r\n";
-//  if (HAL_UART_Transmit_IT(&huart2, (uint8_t*)message, strlen(message)) != HAL_OK) {
-//    Error_Handler();
-//  }
-//
-//  char message2[] = "World!\r\n";
-//  if (HAL_UART_Transmit_IT(&huart2, (uint8_t*)message2, strlen(message2)) != HAL_OK) {
-//    Error_Handler();
-//  }
+
+  HAL_UART_Receive_IT(&huart2, &uart_rx_buffer, 1);		//wait for UART receive interrupt (but rest of program goes on)
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -178,6 +208,7 @@ int main(void)
 		old_counter = counter;
 		printf("counter = %lu\n",counter);
 	}
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

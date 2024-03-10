@@ -187,10 +187,10 @@ void SysTick_Handler(void)
 
 	  clk_div++;
 
-	  if (clk_div >= 100) {
-	    HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	    clk_div = 0;
-	  }
+	//  if (clk_div >= 100) {
+	 //   HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	//    clk_div = 0;
+	//  }
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();

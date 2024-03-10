@@ -138,8 +138,49 @@ Repository dedicated to the STM32L476RG microcontainer
     - `volatile` before variable will force the compiler to always refer to memory when operating on variables.This means that the compiler will disable optimizations for such a variable, such as replacement by a constant or the contents of a register 
     - `HAL_StatusTypeDef HAL_UART_Transmit_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size)` similar to normal transmit but from interrupt 
     - `void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)`function called after last bit was send 
+    - `HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size)` data receive using interrupt NO time out so we need to !!
+    - `void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)`function called after UART receive interrupt is called. Only 1 bit is received so we need to call `HAL_UART_Receive_IT ` -> to start waiting for next bit and function which will handle end of line, enter buffer adding etc example ->
+      ```
+      static char line_buffer[LINE_MAX_LENGTH + 1];
+      static uint32_t line_length;
+      void line_append(uint8_t value)
+      {
+        if (value == '\r' || value == '\n') 
+        {
+        // End of line 
+          if (line_length > 0) 
+          {
+            // if not NULL -> add end of line 
+            line_buffer[line_length] = '\0';
+            // data handling 
+            if (strcmp(line_buffer, "on") == 0) 
+            {
+              HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+            }
+            else if (strcmp(line_buffer, "off") == 0) 
+            {
+            HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+            }
+            //start new text 
+            line_length = 0;
+          }
+        }
+        else 
+        {
+          if (line_length >= LINE_MAX_LENGTH) 
+          {
+            // to much data 
+            line_length = 0;
+          }
+        // add tu buffer
+        line_buffer[line_length++] = value;
+        }
+      }
+
+    - `HAL_GetTick` miliseconds counnt since program started 
   - Quick conclusions
-    - "Static" means maintaining values ​​between successive definitions of the same variable. This is primarily useful in functions. When we define a variable in the function body, this variable will be redefined along with the default value (if any).
+    - `Static` means maintaining values ​​between successive definitions of the same variable. This is primarily useful in functions. When we define a variable in the function body, this variable will be redefined along with the default value (if any).
+    - An example of using `static` is to use it with variables during interrupts because regular variables free up memory space for other variables and the interrupt may occur after the replacement. the static prefix ensures that no variable overwrites this memory location
     - From the programming side, the interrupt handling vector takes the form of an array of pointers to functions, and the functions themselves are the most ordinary functions of the C language. This array is located in the file startup_stm32l476rgtx.s, which can be found in Core\Startup. it was written in assembly language. We simply see an array called g_pfnVectors, the subsequent positions of which (apart from the first one) are the names of the functions called when the interrupt occurs.
     - NVIC "nested vectored interrupt controller" is a universal interrupt controller that is available with ARM Cortex-M cores. This is an advanced solution that has many advantages over the previous ones
     - (External Interrupt Mode) (External Event Mode). The difference is that when an interrupt is reported, its handler is executed. However, the event can be associated with another hardware module and appropriate action will be taken without interrupting the program.
