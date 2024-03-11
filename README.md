@@ -194,3 +194,28 @@ Repository dedicated to the STM32L476RG microcontainer
     - The lower the value, the higher the priority
     - preemption priority If another interrupt with a lower preemption priority value appears during interrupt processing, the current procedure will be suspended and the processor will start servicing the new interrupt.
     - subpriority, it is important if two interrupts with identical priority are ready to be serviced at the same time.
+  #  Timers,PWM, Enkoders 
+  - functions
+    - `void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);` function called after timer overflow (ANY timer! so we need to check which timer hits limit ) example:
+    ```
+    void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+    {
+       if (htim == &htim6) 
+       {
+          HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+       }
+    }  
+    ``` 
+    - `HAL_TIM_Base_Start_IT(&htim6);` timer start 
+  - Quick conclusions
+    - Timers aviable in STM32L4 
+      - advanced control – 2 timers (16-bit)
+      - general purpose – 5 timers (16-bit), 2 timers (32-bit)
+      - basic – 2 timers (16-bit)
+      - low-power – 2 timers (16-bit)
+      - timers SysTick – 1 licznik
+      - timers for watchdoga – 2 timers
+    - bit number represents max value of timer (32 bit -> 4294967296 16 bit -> 65536 )
+    - to set timer for 1 second we need to set prescaler to 7999 (because we have 80kHz/8000=10kHz -> 7999 ->we count from zero and 10k -> prescaler max value is 65536 - 16bit ) and conter period to 9999 
+    - timer period is (prescaler+1)(counterperiod+1)/f 
+    -![alt text](image-1.png)
