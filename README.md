@@ -218,4 +218,7 @@ Repository dedicated to the STM32L476RG microcontainer
     - bit number represents max value of timer (32 bit -> 4294967296 16 bit -> 65536 )
     - to set timer for 1 second we need to set prescaler to 7999 (because we have 80kHz/8000=10kHz -> 7999 ->we count from zero and 10k -> prescaler max value is 65536 - 16bit ) and conter period to 9999 
     - timer period is (prescaler+1)(counterperiod+1)/f 
-    -![alt text](image-1.png)
+     - Timers Features![alt text](image-1.png)
+     - Basic timer ![alt text](image-3.png)
+     - General purpose timer![alt text](image-2.png)
+     - Each channel has its own "Capture/Compare n register", where "n" is the channel number. If a given channel acts as an input, the register can store the measurement result from a given channel (for example, pulse width). However, if a given channel is an output, the value of this register is compared with the base counter. When the values ​​are equal, an interrupt may be raised or the value of the output pin may be changed ![alt text](image-4.png)

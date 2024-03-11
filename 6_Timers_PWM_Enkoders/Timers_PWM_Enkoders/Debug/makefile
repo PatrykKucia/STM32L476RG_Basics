@@ -60,8 +60,8 @@ all: main-build
 main-build: 6_Timers_PWM_Enkoders.elf secondary-outputs
 
 # Tool invocations
-6_Timers_PWM_Enkoders.elf 6_Timers_PWM_Enkoders.map: $(OBJS) $(USER_OBJS) C:\Users\patti\STM32CubeIDE\workspace_1.14.0\Timers_PWM_Enkoders\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "6_Timers_PWM_Enkoders.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\patti\STM32CubeIDE\workspace_1.14.0\Timers_PWM_Enkoders\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="6_Timers_PWM_Enkoders.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+6_Timers_PWM_Enkoders.elf 6_Timers_PWM_Enkoders.map: $(OBJS) $(USER_OBJS) C:\Users\patti\Desktop\STM32L476RG\STM32L476RG_Basics\6_Timers_PWM_Enkoders\Timers_PWM_Enkoders\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "6_Timers_PWM_Enkoders.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\patti\Desktop\STM32L476RG\STM32L476RG_Basics\6_Timers_PWM_Enkoders\Timers_PWM_Enkoders\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="6_Timers_PWM_Enkoders.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
