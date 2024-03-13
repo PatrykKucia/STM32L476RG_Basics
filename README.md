@@ -210,6 +210,7 @@ Repository dedicated to the STM32L476RG microcontainer
     - `HAL_TIM_OC_DelayElapsedCallback` is called after chanel hits its limit. 
     - `HAL_TIM_GetActiveChannel(&htim3)`&`HAL_TIM_ACTIVE_CHANNEL_1` specify which chanell finished, 
     - `HAL_TIM_OC_Start_IT(&htim3, TIM_CHANNEL_1);` to start counting in spcific timer
+    - `HAL_TIM_PWM_Start` starts counting  when we use PWM Generation CH-
     example:
     ```
     switch (HAL_TIM_GetActiveChannel(&htim3)) {
@@ -231,3 +232,4 @@ Repository dedicated to the STM32L476RG microcontainer
      - General purpose timer![alt text](image-2.png)
      - Each channel has its own "Capture/Compare n register", where "n" is the channel number. If a given channel acts as an input, the register can store the measurement result from a given channel (for example, pulse width). However, if a given channel is an output, the value of this register is compared with the base counter. When the values ​​are equal, an interrupt may be raised or the value of the output pin may be changed ![alt text](image-4.png)
      - "Output Compare", means that a given channel will work as an output. In such a situation, the value of the register associated with a specific channel is compared with the main counter. Whereas "No Output" means that the channel is not directly (hardware) connected to any output pin. The Pulse value in the settings will be compared with the base counter value.
+     - We can use hardware PWM to reduce number of interrupts ![alt text](image-5.png)
