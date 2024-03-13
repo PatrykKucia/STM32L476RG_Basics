@@ -212,6 +212,7 @@ Repository dedicated to the STM32L476RG microcontainer
     - `HAL_TIM_OC_Start_IT(&htim3, TIM_CHANNEL_1);` to start counting in spcific timer
     - `HAL_TIM_PWM_Start` starts counting  when we use hardware PWM Generation CH-
     example:
+    - `__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, new_pulse_value);` macro which modifies pulse value
     ```
     switch (HAL_TIM_GetActiveChannel(&htim3)) {
     case HAL_TIM_ACTIVE_CHANNEL_1:
