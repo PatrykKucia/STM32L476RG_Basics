@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "math.h"
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -107,21 +108,34 @@ int main(void)
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
   int counter=0;
+  bool back=0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  float r = 50 * (1.0f + sin(counter / 100.0f));
-	  float g = 50 * (1.0f + sin(1.5f * counter / 100.0f));
-	  float b = 50 * (1.0f + sin(2.0f * counter / 100.0f));
-	  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, calc_pwm(b));
-	  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, calc_pwm(g));
-	  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, calc_pwm(r));
+
+	  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, calc_pwm(0));
+	  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, calc_pwm(0));
+	  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, calc_pwm(counter));
 
 	  HAL_Delay(10);
-	  counter++;
+	  if(counter==100)
+	  {
+		  back = 1;
+		  counter--;
+	  }
+	  if(counter==0&&back)
+	  {
+		  back=0;
+		  counter++;
+	  }
+
+	  if(back)
+		  counter--;
+	  else
+		  counter++;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
