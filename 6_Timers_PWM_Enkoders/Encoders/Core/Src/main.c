@@ -70,6 +70,21 @@ int __io_putchar(int ch)
     return 1;
 }
 
+volatile uint32_t captured_value;
+
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+{
+  if (htim == &htim3) {
+    switch (HAL_TIM_GetActiveChannel(&htim3)) {
+      case HAL_TIM_ACTIVE_CHANNEL_1:
+        captured_value = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
+        break;
+      default:
+        break;
+    }
+  }
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -103,19 +118,21 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+  printf("start");
+  fflush(stdout);
   HAL_TIM_Base_Start(&htim3);//start counting
+  HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);//start chanel 1 counting
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint32_t old_value=0;
+
   while (1)
   {
-	  uint32_t value = __HAL_TIM_GET_COUNTER(&htim3);
-	  if(old_value != value)
-	  {
-		  old_value = value;
-		  printf("value = %lu\n", value);
+
+	  if (captured_value != 0) {
+	      printf("value = %lu\n", captured_value);
+	      captured_value = 0;
 	  }
     /* USER CODE END WHILE */
 
@@ -187,13 +204,15 @@ static void MX_TIM3_Init(void)
   /* USER CODE END TIM3_Init 0 */
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_SlaveConfigTypeDef sSlaveConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_IC_InitTypeDef sConfigIC = {0};
 
   /* USER CODE BEGIN TIM3_Init 1 */
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 0;
+  htim3.Init.Prescaler = 7999;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim3.Init.Period = 65535;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -202,17 +221,34 @@ static void MX_TIM3_Init(void)
   {
     Error_Handler();
   }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_ETRMODE2;
-  sClockSourceConfig.ClockPolarity = TIM_CLOCKPOLARITY_NONINVERTED;
-  sClockSourceConfig.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
-  sClockSourceConfig.ClockFilter = 15;
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
   if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_IC_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_RESET;
+  sSlaveConfig.InputTrigger = TIM_TS_TI1F_ED;
+  sSlaveConfig.TriggerPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sSlaveConfig.TriggerFilter = 0;
+  if (HAL_TIM_SlaveConfigSynchro(&htim3, &sSlaveConfig) != HAL_OK)
   {
     Error_Handler();
   }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
+  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
+  sConfigIC.ICFilter = 0;
+  if (HAL_TIM_IC_ConfigChannel(&htim3, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -269,7 +305,6 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */

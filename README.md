@@ -206,7 +206,7 @@ Repository dedicated to the STM32L476RG microcontainer
        }
     }  
     ``` 
-    - `HAL_TIM_Base_Start_IT(&htim6);` timer start 
+    - `HAL_TIM_Base_Start_IT(&htim6);` timer start with interrupt
     - `HAL_TIM_OC_DelayElapsedCallback` is called after chanel hits its limit. 
     - `HAL_TIM_GetActiveChannel(&htim3)`&`HAL_TIM_ACTIVE_CHANNEL_1` specify which chanell finished, 
     - `HAL_TIM_OC_Start_IT(&htim3, TIM_CHANNEL_1);` to start counting in spcific timer
@@ -219,6 +219,9 @@ Repository dedicated to the STM32L476RG microcontainer
     switch (HAL_TIM_GetActiveChannel(&htim3)) {
     case HAL_TIM_ACTIVE_CHANNEL_1:
     ```
+    - `HAL_TIM_IC_CaptureCallback` is called after timer with external input TIMx_CH1 is trigger
+    - `HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1)` after external input is trigered we can read timer (from internal clock) value
+    - `HAL_TIM_IC_Start_IT` to start chanel counting
   - Quick conclusions
     - Timers aviable in STM32L4 
       - advanced control – 2 timers (16-bit)
@@ -240,3 +243,29 @@ Repository dedicated to the STM32L476RG microcontainer
      - TIM can by counted by external signal ![alt text](image-6.png) 
      - Use RC filter in encoder !
      - Same resault we can get using Digital filter in cubeMX ![alt text](image-7.png)
+     - script used to count impulse time 
+     - ```
+          volatile uint32_t captured_value;
+          
+          void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+          {
+            if (htim == &htim3) {
+              switch (HAL_TIM_GetActiveChannel(&htim3)) {
+                case HAL_TIM_ACTIVE_CHANNEL_1:
+                  captured_value = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
+                  break;
+                default:
+                  break;
+              }
+            }
+          }
+          HAL_TIM_Base_Start(&htim3);
+          HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);
+          
+          while (1)
+          {
+            if (captured_value != 0) {
+              printf("value = %lu\n", captured_value);
+              captured_value = 0;
+            }
+        ```
