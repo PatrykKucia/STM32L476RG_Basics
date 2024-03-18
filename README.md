@@ -213,6 +213,8 @@ Repository dedicated to the STM32L476RG microcontainer
     - `HAL_TIM_PWM_Start` starts counting  when we use hardware PWM Generation CH-
     example:
     - `__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, new_pulse_value);` macro which modifies pulse value
+    - `HAL_TIM_Base_Start` starts counting (external signal no interrupt)
+    - `uint32_t value = __HAL_TIM_GET_COUNTER(&htim3);` returns timer value
     ```
     switch (HAL_TIM_GetActiveChannel(&htim3)) {
     case HAL_TIM_ACTIVE_CHANNEL_1:
@@ -235,3 +237,6 @@ Repository dedicated to the STM32L476RG microcontainer
      - "Output Compare", means that a given channel will work as an output. In such a situation, the value of the register associated with a specific channel is compared with the main counter. Whereas "No Output" means that the channel is not directly (hardware) connected to any output pin. The Pulse value in the settings will be compared with the base counter value.
      - We can use hardware PWM to reduce number of interrupts ![alt text](image-5.png)
      - PWM can be used to change brightnes og LED diode -> much higher frequency is needed so we se prescaler to 79 (from 7999) so we have 100Hz and pulse to 50/400/2000
+     - TIM can by counted by external signal ![alt text](image-6.png) 
+     - Use RC filter in encoder !
+     - Same resault we can get using Digital filter in cubeMX ![alt text](image-7.png)

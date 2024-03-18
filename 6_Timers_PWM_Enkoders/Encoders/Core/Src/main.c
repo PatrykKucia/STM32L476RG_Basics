@@ -103,7 +103,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start(&htim3);
+  HAL_TIM_Base_Start(&htim3);//start counting
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -205,7 +205,7 @@ static void MX_TIM3_Init(void)
   sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_ETRMODE2;
   sClockSourceConfig.ClockPolarity = TIM_CLOCKPOLARITY_NONINVERTED;
   sClockSourceConfig.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
-  sClockSourceConfig.ClockFilter = 0;
+  sClockSourceConfig.ClockFilter = 15;
   if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
   {
     Error_Handler();

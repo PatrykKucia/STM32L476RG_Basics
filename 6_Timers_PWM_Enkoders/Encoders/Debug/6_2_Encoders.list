@@ -489,7 +489,7 @@ int main(void)
   MX_TIM3_Init();
  80005c2:	f000 f86b 	bl	800069c <MX_TIM3_Init>
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start(&htim3);
+  HAL_TIM_Base_Start(&htim3);//start counting
  80005c6:	480a      	ldr	r0, [pc, #40]	; (80005f0 <main+0x44>)
  80005c8:	f002 f960 	bl	800288c <HAL_TIM_Base_Start>
   /* USER CODE END 2 */
@@ -723,8 +723,8 @@ static void MX_TIM3_Init(void)
   sClockSourceConfig.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
  80006fa:	2300      	movs	r3, #0
  80006fc:	61bb      	str	r3, [r7, #24]
-  sClockSourceConfig.ClockFilter = 0;
- 80006fe:	2300      	movs	r3, #0
+  sClockSourceConfig.ClockFilter = 15;
+ 80006fe:	230f      	movs	r3, #15
  8000700:	61fb      	str	r3, [r7, #28]
   if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
  8000702:	f107 0310 	add.w	r3, r7, #16
