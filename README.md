@@ -222,6 +222,8 @@ Repository dedicated to the STM32L476RG microcontainer
     - `HAL_TIM_IC_CaptureCallback` is called after timer with external input TIMx_CH1 is trigger
     - `HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1)` after external input is trigered we can read timer (from internal clock) value
     - `HAL_TIM_IC_Start_IT` to start chanel counting
+    - `HAL_TIM_Encoder_Start` to start encoder counting 
+    - `__HAL_TIM_GET_COUNTER` macro used to get encoder value (int16_t because we have negative value) or you can use counter period to reset value after full turn 
   - Quick conclusions
     - Timers aviable in STM32L4 
       - advanced control – 2 timers (16-bit)
@@ -269,3 +271,4 @@ Repository dedicated to the STM32L476RG microcontainer
               captured_value = 0;
             }
         ```
+      - Special encoder mode in timer3 ![alt text](image-8.png)
