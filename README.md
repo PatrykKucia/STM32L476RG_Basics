@@ -297,4 +297,6 @@ Repository dedicated to the STM32L476RG microcontainer
     - to reduce the impact of internal resistance we can add 100nF between ground and ADC pin
     - dependence of the sampling time on the source resistance (for an 80 MHz clock ![alt text](image-9.png)
     - While sampling the voltage, the microcontroller (in simple terms) charges the internal capacitor. This takes time, and the greater the resistance through which it is charged, the longer it takes to charge it. When we set our 10 k potentiometer halfway, the resistance of such a source will be (according to Thevenien's theorem) about 2.5 k (yes, 2.5 k, not 5 k).So far, we have used the default sampling time, which is set to the minimum value, i.e. 2.5 cycles. The transducer clock has a frequency of 32 MHz, so sampling takes only 78.125 ns - and this is not enough to fully charge the capacitor in our transducer with a source resistance of 2.5 k. Adding a 100 nF capacitor meant that when a measurement was made, the current could quickly flow from it to the capacitor built into the transducer, and the 100 nF capacitor was recharged between measurements.
+    - the time it takes for one measurement : ((sampling time 2.5-640.5 cycles)+(conversion always 12.5 clock cycles))*1/(adc timing for example 32MHz)= us
+    ![alt text](image-10.png)
 
