@@ -126,7 +126,7 @@ Repository dedicated to the STM32L476RG microcontainer
     - working time calculation mAh(sorce)/curent(board)=hour count -> if same voltage
     - working voltage range 1.7V - 3.6V (no ldo step etc)
     - Wake Up Counter (Timers-> RTC) setts to 20,479 gives us 10s of delay. The RTC module is clocked at 32,768 Hz. In addition, we have a selected divisor by 16. This means that the clock will run at a frequency of 32768 / 16 = 2048 Hz, (20479 + 1) / 2048 = 10. "+ 1" because the counter counts from zero, so counting 100 pulses would require entering the value 99, etc. then we need activate interrupt in NVIC
-    - > [!IMPORTANT] bug in cubeMX must add 
+    - > [!IMPORTANT] :bangbang: bug in cubeMX must add 
     `   /* USER CODE BEGIN RTC_Init 2 */
     - in tools you can use Power Consumption Calculator.
       - double click on mode table to set duration ( auto refresh must be off!)
@@ -282,14 +282,19 @@ Repository dedicated to the STM32L476RG microcontainer
     - `HAL_ADC_Start(&hadc1);` - starts measurement
     - `HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);` sets measurement time
     - `HAL_ADC_GetValue` - returns ADC value
-    - ```
-	  uint32_t value = HAL_ADC_GetValue(&hadc1);
-	  float voltage = 3.3f*value/4096.0f; //raw to volt conversion
-    ```
+    - ```uint32_t value = HAL_ADC_GetValue(&hadc1);
+          float voltage = 3.3f*value/4096.0f; //raw to volt conversion
+      ```
+    
   - Quick conclusions
     - 3 idependent 12-bit ADC 
     - ADC1 & ADC2 have multiplexers, ADC3 have 12 Inputs
     - To sum up, we can measure 24 analog signals
+    - :bangbang: :bangbang: MAX Value 0 V do 3,3 V !!
     - Vrefint Channel can be measured
     - Not all analog circuits return results as voltage, which should be measured relative to ground. A good example is when we use a measuring bridge. Then the result is the difference between the two outputs, not one output and ground. To read such a result, we can perform the conversion using ADC twice and subtract the obtained values.
     - ADC 12 bit -> 2^12 = 4096 (max value) ADC=Vadc/3.3v * 4096
+    - to reduce the impact of internal resistance we can add 100nF between ground and ADC pin
+    - dependence of the sampling time on the source resistance (for an 80 MHz clock ![alt text](image-9.png)
+    - While sampling the voltage, the microcontroller (in simple terms) charges the internal capacitor. This takes time, and the greater the resistance through which it is charged, the longer it takes to charge it. When we set our 10 k potentiometer halfway, the resistance of such a source will be (according to Thevenien's theorem) about 2.5 k (yes, 2.5 k, not 5 k).So far, we have used the default sampling time, which is set to the minimum value, i.e. 2.5 cycles. The transducer clock has a frequency of 32 MHz, so sampling takes only 78.125 ns - and this is not enough to fully charge the capacitor in our transducer with a source resistance of 2.5 k. Adding a 100 nF capacitor meant that when a measurement was made, the current could quickly flow from it to the capacitor built into the transducer, and the 100 nF capacitor was recharged between measurements.
+
