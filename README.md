@@ -282,9 +282,14 @@ Repository dedicated to the STM32L476RG microcontainer
     - `HAL_ADC_Start(&hadc1);` - starts measurement
     - `HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);` sets measurement time
     - `HAL_ADC_GetValue` - returns ADC value
+    - ```
+	  uint32_t value = HAL_ADC_GetValue(&hadc1);
+	  float voltage = 3.3f*value/4096.0f; //raw to volt conversion
+    ```
   - Quick conclusions
     - 3 idependent 12-bit ADC 
     - ADC1 & ADC2 have multiplexers, ADC3 have 12 Inputs
     - To sum up, we can measure 24 analog signals
     - Vrefint Channel can be measured
     - Not all analog circuits return results as voltage, which should be measured relative to ground. A good example is when we use a measuring bridge. Then the result is the difference between the two outputs, not one output and ground. To read such a result, we can perform the conversion using ADC twice and subtract the obtained values.
+    - ADC 12 bit -> 2^12 = 4096 (max value) ADC=Vadc/3.3v * 4096

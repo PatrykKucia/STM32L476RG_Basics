@@ -114,7 +114,8 @@ int main(void)
 	  HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
 
 	  uint32_t value = HAL_ADC_GetValue(&hadc1);
-	  printf("ADC = %lu\n", value);
+	  float voltage = 3.3f*value/4096.0f;
+	  printf("ADC = %lu\n Voltage = %.3f V \n",value, voltage);
 
 	  HAL_Delay(250);
 
