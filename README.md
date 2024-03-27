@@ -308,4 +308,5 @@ Repository dedicated to the STM32L476RG microcontainer
     - The advantage of DMA (direct memory access) is that it works in parallel with the microcontroller, so, similarly to multi-core machines, we can continue to execute the program while the auxiliary processor performs its tas
     -![alt text](image-12.png)![alt text](image-13.png)
     - However, if we wanted to fully use the capabilities of the analog-to-digital converter, we would not only have to ensure an appropriate signal source, but also optimize the program or disable these interrupts. To do this, go to the NVIC module in CubeMX and uncheck the Force DMA channels Interrupts option - only then will Cube allow you to disable these interrupts. If you do not uncheck this option, DMA interrupts will be enabled by default and cannot be unchecked.
+    - oversampling ![alt text](image-14.png)first we take 16 measurements, add them together, and finally divide the result by 16. As you can easily guess, we should obtain average results this way.
 
