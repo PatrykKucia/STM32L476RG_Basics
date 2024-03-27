@@ -280,6 +280,11 @@ Repository dedicated to the STM32L476RG microcontainer
   - functions
     - `HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);`- calibrates ADC -> we can chose  ADC_SINGLE_ENDED or ADC_DIFFERENTIAL_ENDED
     - `HAL_ADC_Start(&hadc1);` - starts measurement
+    - `HAL_ADC_Start_DMA` - same but for DMA
+    - ```
+          volatile static uint16_t value[2];//to prevent compilator from overwriting
+          HAL_ADC_Start_DMA(&hadc1, (uint32_t*)value, 2);//explicit casting
+      ```
     - `HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);` sets measurement time
     - `HAL_ADC_GetValue` - returns ADC value
     - ```uint32_t value = HAL_ADC_GetValue(&hadc1);
@@ -300,4 +305,7 @@ Repository dedicated to the STM32L476RG microcontainer
     - the time it takes for one measurement : ((sampling time 2.5-640.5 cycles)+(conversion always 12.5 clock cycles))*1/(adc timing for example 32MHz)= us
     ![alt text](image-10.png)
     - two channels configuration ![alt text](image-11.png)
+    - The advantage of DMA (direct memory access) is that it works in parallel with the microcontroller, so, similarly to multi-core machines, we can continue to execute the program while the auxiliary processor performs its tas
+    -![alt text](image-12.png)![alt text](image-13.png)
+    - However, if we wanted to fully use the capabilities of the analog-to-digital converter, we would not only have to ensure an appropriate signal source, but also optimize the program or disable these interrupts. To do this, go to the NVIC module in CubeMX and uncheck the Force DMA channels Interrupts option - only then will Cube allow you to disable these interrupts. If you do not uncheck this option, DMA interrupts will be enabled by default and cannot be unchecked.
 
