@@ -290,7 +290,9 @@ Repository dedicated to the STM32L476RG microcontainer
     - ```uint32_t value = HAL_ADC_GetValue(&hadc1);
           float voltage = 3.3f*value/4096.0f; //raw to volt conversion
       ```
-    
+    - `HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);`- Starts 1 channel of DAC
+    - `HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 1650);`- Sets trigger voltage (DAC_ALIGN_12B_R value type)
+    - `HAL_COMP_Start(&hcomp1);` - turns on comparator
   - Quick conclusions
     - 3 idependent 12-bit ADC 
     - ADC1 & ADC2 have multiplexers, ADC3 have 12 Inputs
@@ -309,4 +311,9 @@ Repository dedicated to the STM32L476RG microcontainer
     -![alt text](image-12.png)![alt text](image-13.png)
     - However, if we wanted to fully use the capabilities of the analog-to-digital converter, we would not only have to ensure an appropriate signal source, but also optimize the program or disable these interrupts. To do this, go to the NVIC module in CubeMX and uncheck the Force DMA channels Interrupts option - only then will Cube allow you to disable these interrupts. If you do not uncheck this option, DMA interrupts will be enabled by default and cannot be unchecked.
     - oversampling ![alt text](image-14.png)first we take 16 measurements, add them together, and finally divide the result by 16. As you can easily guess, we should obtain average results this way.
+    - STM32STUDIO ![alt text](image-15.png)
+    - For STM32STUDIO working properly we need to set gcc to 4 in project properties  in every MCU GCC![alt text](image-16.png)\
+    - Point Viewer ![alt text](image-17.png)
+    - Comparator and DAC (for Vref) configuration. The use of a comparator makes this entire operation performed in hardware! We do not burden the microcontroller with this, what's more, we can even put it to sleep to reduce energy consumption, and our sensor will work anyway. Secondly, we managed to save one ADC input - in some projects this may be crucial.![alt text](image-18.png)![alt text](image-19.png)
+
 
