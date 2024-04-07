@@ -77,6 +77,8 @@ Repository dedicated to the STM32L476RG microcontainer
     - `" "`The double quotes are used for string literals.They interpret escape sequences like newline, tab, backspace, etc.
     - newlib-nano is a C library for embedded systems, and it provides a minimal set of features from the newlib library. The option Use float with printf allows the library to include the necessary code to support the floating-point formatting in the printf function.
     - when Overrun is enable program will block when to much data is received. When disabled it will just loose some data.
+    - We can setup external UART instead NEUCLEO UART2. for testing i used ftdi232 and USART1. Pinout:
+    ![alt text](image-20.png)
   # System clocking, RTC, watchdog
   - functions
     - RTC_TimeTypeDef
@@ -314,6 +316,6 @@ Repository dedicated to the STM32L476RG microcontainer
     - STM32STUDIO ![alt text](image-15.png)
     - For STM32STUDIO working properly we need to set gcc to 4 in project properties  in every MCU GCC![alt text](image-16.png)\
     - Point Viewer ![alt text](image-17.png)
-    - Comparator and DAC (for Vref) configuration. The use of a comparator makes this entire operation performed in hardware! We do not burden the microcontroller with this, what's more, we can even put it to sleep to reduce energy consumption, and our sensor will work anyway. Secondly, we managed to save one ADC input - in some projects this may be crucial.![alt text](image-18.png)![alt text](image-19.png)
+    - Comparator and DAC (for Vref) configuration. ![alt text](image-18.png)![alt text](image-19.png)
 
 
