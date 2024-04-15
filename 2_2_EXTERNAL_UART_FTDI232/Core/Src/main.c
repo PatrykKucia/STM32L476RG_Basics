@@ -103,7 +103,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  int text=1;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -113,10 +113,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  int text=0;
+
 	  printf("%d\n",text);
 	  fflush(stdout);
 	  text++;
+	  HAL_Delay(500);
   }
   /* USER CODE END 3 */
 }

@@ -77,7 +77,7 @@ Repository dedicated to the STM32L476RG microcontainer
     - `" "`The double quotes are used for string literals.They interpret escape sequences like newline, tab, backspace, etc.
     - newlib-nano is a C library for embedded systems, and it provides a minimal set of features from the newlib library. The option Use float with printf allows the library to include the necessary code to support the floating-point formatting in the printf function.
     - when Overrun is enable program will block when to much data is received. When disabled it will just loose some data.
-    - We can setup external UART instead NEUCLEO UART2. for testing i used ftdi232 and USART1. Pinout:
+    - We can setup external UART instead NEUCLEO UART2. for testing i used ftdi232 and USART1, you can set up external 5V power source in JP5 jumper. Pinout:
     ![alt text](image-20.png)
   # System clocking, RTC, watchdog
   - functions
@@ -306,7 +306,7 @@ Repository dedicated to the STM32L476RG microcontainer
     - to reduce the impact of internal resistance we can add 100nF between ground and ADC pin
     - dependence of the sampling time on the source resistance (for an 80 MHz clock ![alt text](image-9.png)
     - While sampling the voltage, the microcontroller (in simple terms) charges the internal capacitor. This takes time, and the greater the resistance through which it is charged, the longer it takes to charge it. When we set our 10 k potentiometer halfway, the resistance of such a source will be (according to Thevenien's theorem) about 2.5 k (yes, 2.5 k, not 5 k).So far, we have used the default sampling time, which is set to the minimum value, i.e. 2.5 cycles. The transducer clock has a frequency of 32 MHz, so sampling takes only 78.125 ns - and this is not enough to fully charge the capacitor in our transducer with a source resistance of 2.5 k. Adding a 100 nF capacitor meant that when a measurement was made, the current could quickly flow from it to the capacitor built into the transducer, and the 100 nF capacitor was recharged between measurements.
-    - the time it takes for one measurement : ((sampling time 2.5-640.5 cycles)+(conversion always 12.5 clock cycles))*1/(adc timing for example 32MHz)= us
+    - the time it takes for one measurement : ((sampling time 2.5-640.5 cycles)+(conversion always 12.5 clock cycles))*1/(adc timing for example 32MHz)= us\
     ![alt text](image-10.png)
     - two channels configuration ![alt text](image-11.png)
     - The advantage of DMA (direct memory access) is that it works in parallel with the microcontroller, so, similarly to multi-core machines, we can continue to execute the program while the auxiliary processor performs its tas
@@ -314,8 +314,54 @@ Repository dedicated to the STM32L476RG microcontainer
     - However, if we wanted to fully use the capabilities of the analog-to-digital converter, we would not only have to ensure an appropriate signal source, but also optimize the program or disable these interrupts. To do this, go to the NVIC module in CubeMX and uncheck the Force DMA channels Interrupts option - only then will Cube allow you to disable these interrupts. If you do not uncheck this option, DMA interrupts will be enabled by default and cannot be unchecked.
     - oversampling ![alt text](image-14.png)first we take 16 measurements, add them together, and finally divide the result by 16. As you can easily guess, we should obtain average results this way.
     - STM32STUDIO ![alt text](image-15.png)
-    - For STM32STUDIO working properly we need to set gcc to 4 in project properties  in every MCU GCC![alt text](image-16.png)\
+    - For STM32STUDIO working properly we need to set gcc to 4 in project properties  in every MCU GCC![alt text](image-16.png)
     - Point Viewer ![alt text](image-17.png)
     - Comparator and DAC (for Vref) configuration. ![alt text](image-18.png)![alt text](image-19.png)
 
+  #  8 SPI MCP23S08
+  - functions 
+    - `HAL_StatusTypeDef HAL_SPI_Transmit(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size, uint32_t Timeout);`-Transmit SPI frame
+    - `HAL_StatusTypeDef HAL_SPI_Receive(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size, uint32_t Timeout);` -Receive SPI frame
+    - `HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef *hspi, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size, uint32_t Timeout);` Transmit and Receive SPI frame -> they must be the same size!
+  - Quick conclusions
+    - UART (asynchronous) VS SPI(synchronous)
+    ![alt text](image-21.png)
+    ![alt text](image-22.png)
+    - In SPI we have 
+      - MOSI (master output slave input)
+      - MISO (master input slave output)
+      - SCLK (serial clock)
+      - SS (slave select) ot CS (chip select) 
+    - The CS line used in the SPI standard is negated. This means that in order to activate a given system, the logic state at its CS input must be set to low.
+    - STM32L476RG has as many as three SPI hardware interfaces, and each of them can communicate at a speed of up to 40 Mbit/s.
+    - Hardware support for the CS line in STM32 is much more useful when our microcontroller is to act as a slave system (it is more convenient for the programmer).
+    - When configuring such interfaces, the capabilities of the master and slave systems should always be taken into account. Our microcontroller allows transmission via SPI at a speed of up to 40 MBit/s, but the expander, i.e. MCP23S08, supports a maximum of 10 MBit/s. That's why we had to set the prescaler to 8 (because 80 MHz over 8 gives 10 MHz).
+    - ![alt text](image-23.png)
+    - MCP23S08 Registers 
+    - ![alt text](image-24.png)
+    - IODIR is a register that allows you to set the direction of operation of pins GP0-GP7. If we want a given pin to work as an input, enter 1 in its place; if we enter 0 there, the pin will be configured as an output.
+      - IODIR = 00000000 – all pins are outputs,
+      - IODIR = 11111111 – all pins are inputs,
+      - IODIR = 00000001 – GP0 pin as input, the rest as outputs.
+    - ![alt text](image-25.png)
+    - OLAT is a register that we will use to change the state of pins that work as outputs.
+    - ![alt text](image-26.png)
+    - GPIO is a register from which we can read the current state on pins previously configured as inputs.
+    - ![alt text](image-27.png)
+    - GPPU is a register that, in the case of pins acting as inputs, allows you to activate pull-up resistors for a given pin.
+    - ![alt text](image-28.png)
+    - frame structure : 2 start bytes in every frame and 1 byte -> register address  
+    - for example setting GP0 as output 0x40-> 00000110 (A1,A0 always ON R/W 0-Write), MCP_IODIR->register addres 0xFE->11111110 (1->IN 0->OUT MSB is GP7)
+    - `uint8_t gpio_config[3] = { 0x40, MCP_IODIR, 0xFE };`
+    - ![alt text](image-29.png)
 
+    - Sending Config frame using byte array 
+     ```
+      uint8_t gpio_config[3] = { 0x40, MCP_IODIR, 0xFE }; 
+      HAL_GPIO_WritePin(IOEXP_CS_GPIO_Port, IOEXP_CS_Pin, GPIO_PIN_RESET);
+      HAL_SPI_Transmit(&hspi2, gpio_config, 3, HAL_MAX_DELAY);
+      ```
+    - LED OFF frame 
+    ![alt text](image-30.png)
+
+ 
