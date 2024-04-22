@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -52,6 +53,8 @@
 /* Private variables ---------------------------------------------------------*/
 SPI_HandleTypeDef hspi2;
 
+UART_HandleTypeDef huart2;
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -60,19 +63,55 @@ SPI_HandleTypeDef hspi2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI2_Init(void);
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+//Write to MCP
 void mcp_reg_write(uint8_t reg, uint8_t value)
 {
-	uint8_t tx[3]={0x40, reg, value};//WRITE TO MCP
+	uint8_t tx[3]={0x40, reg, value};//0x40 to write
 	HAL_GPIO_WritePin(IOEXP_CS_GPIO_Port, IOEXP_CS_Pin, GPIO_PIN_RESET);//SET SLAVE SELECT 0
 	HAL_SPI_Transmit(&hspi2, tx, 3, HAL_MAX_DELAY);
 	HAL_GPIO_WritePin(IOEXP_CS_GPIO_Port, IOEXP_CS_Pin, GPIO_PIN_SET);
 }
+
+//Read from MCP
+uint8_t mcp_reg_read(uint8_t reg)
+{
+	//uint8_t tx[2]={0x41,reg};//0x41 to read
+	//uint8_t value;
+
+	uint8_t tx[3] = { 0x41, reg, 0xff};
+	uint8_t rx[3];
+
+	//HAL_SPI_Transmit(&hspi2, tx, 2, HAL_MAX_DELAY);//send read request			//ok but we to use less space we can use HAL_SPI_TRANSMITRECEIVE
+	//HAL_SPI_Receive(&hspi2, &value, 1, HAL_MAX_DELAY);//wait for response
+
+
+	HAL_GPIO_WritePin(IOEXP_CS_GPIO_Port, IOEXP_CS_Pin, GPIO_PIN_RESET);
+	HAL_SPI_TransmitReceive(&hspi2, tx, rx, 3, HAL_MAX_DELAY);//3 for size
+	HAL_GPIO_WritePin(IOEXP_CS_GPIO_Port, IOEXP_CS_Pin, GPIO_PIN_SET);
+	//printf("%d %#X %d\n",rx[1],rx[2],rx[3]);										//for debug
+	return rx[2];
+
+}
+
+int __io_putchar(int ch)
+{
+	if(ch=='\n')
+	{
+		uint8_t ch2='\r';	//to fix end of line
+		HAL_UART_Transmit(&huart2, (uint8_t*)&ch2, 1, HAL_MAX_DELAY);
+	}
+    HAL_UART_Transmit(&huart2, (uint8_t*)&ch, 1, HAL_MAX_DELAY);
+    return 1;
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -104,23 +143,26 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_SPI2_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
   mcp_reg_write(MCP_IODIR,0xFE);//OUTPUT PIN SETUP
+  mcp_reg_write(MCP_GPPU, 0x02);//GPI1 pull-up
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  //LED ON
-	  mcp_reg_write(MCP_OLAT,0x01);
-	  HAL_Delay(500);
-
-	  //LED OFF
-	  mcp_reg_write(MCP_OLAT,0x00);
-
-	  HAL_Delay(500);
+	  //printf("readed %x\n", mcp_reg_read(MCP_GPIO)); debug
+	  //printf("const %x\n", 0x02);
+	  if ((mcp_reg_read(MCP_GPIO) & 0x02) == 0) { //if 00000010 ->1 always 1 (pull-up)
+	      //LED OFF
+	      mcp_reg_write(MCP_OLAT, 0x01);
+	    } else {
+	      //LED ON
+	      mcp_reg_write(MCP_OLAT, 0x00);
+	    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -219,6 +261,41 @@ static void MX_SPI2_Init(void)
 }
 
 /**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+
+  /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -231,8 +308,8 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(IOEXP_CS_GPIO_Port, IOEXP_CS_Pin, GPIO_PIN_SET);

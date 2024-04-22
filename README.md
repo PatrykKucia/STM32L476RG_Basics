@@ -323,6 +323,8 @@ Repository dedicated to the STM32L476RG microcontainer
     - `HAL_StatusTypeDef HAL_SPI_Transmit(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size, uint32_t Timeout);`-Transmit SPI frame
     - `HAL_StatusTypeDef HAL_SPI_Receive(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size, uint32_t Timeout);` -Receive SPI frame
     - `HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef *hspi, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size, uint32_t Timeout);` Transmit and Receive SPI frame -> they must be the same size!
+    - `mcp_write_reg(MCP_GPPU, 0x02);` to activate pull-up in MCP
+    - `  if ((mcp_reg_read(MCP_GPIO) & 0x02) == 0) {` usefull bit & comparing 1-if 00000010  
   - Quick conclusions
     - UART (asynchronous) VS SPI(synchronous)
     ![alt text](image-21.png)
@@ -353,6 +355,10 @@ Repository dedicated to the STM32L476RG microcontainer
     - frame structure : 2 start bytes in every frame and 1 byte -> register address  
     - for example setting GP0 as output 0x40-> 00000110 (A1,A0 always ON R/W 0-Write), MCP_IODIR->register addres 0xFE->11111110 (1->IN 0->OUT MSB is GP7)
     - `uint8_t gpio_config[3] = { 0x40, MCP_IODIR, 0xFE };`
+    - reading from the register is as follows:
+      - we send the device address 0x41 (because 0x40 was for writing),
+      - then we send the address of the register we are interested in,
+      - we receive the contents of a given register via SPI.
     - ![alt text](image-29.png)
 
     - Sending Config frame using byte array 
