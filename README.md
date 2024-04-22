@@ -369,5 +369,8 @@ Repository dedicated to the STM32L476RG microcontainer
       ```
     - LED OFF frame 
     ![alt text](image-30.png)
+    - Separate .c .h functions
+    ![alt text](image-31.png)
+    ![alt text](image-32.png)
 
  

@@ -1,0 +1,2 @@
+../Core/Src/MCP23S08.c:10:6:mcp_reg_write	1
+../Core/Src/MCP23S08.c:19:9:mcp_reg_read	1
